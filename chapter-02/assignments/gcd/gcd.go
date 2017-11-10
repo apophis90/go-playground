@@ -9,14 +9,17 @@ import (
 func main() {
 	if len(os.Args) != 3 {
 		fmt.Fprintln(os.Stderr, "gcd.go: Expect exactly 2 arguments!")
+		os.Exit(1)
 	}
 	a, err := strconv.Atoi(os.Args[1])
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Oops, something went wrong.")
+		fmt.Fprintln(os.Stderr, "gcd.go: Error reading first argument.")
+		os.Exit(2)
 	}
 	b, err := strconv.Atoi(os.Args[2])
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Oops, something went wrong.")
+		fmt.Fprintln(os.Stderr, "gcd.go: Error reading second argument.")
+		os.Exit(2)
 	}
 	fmt.Printf("Greatest common divisor of %d and %d is: %d\n", a, b, gcd(a, b))
 }
