@@ -17,4 +17,7 @@
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 
+# Miscellaneous
+*.gif
+
 # End of https://www.gitignore.io/api/go
