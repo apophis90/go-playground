@@ -27,3 +27,13 @@ func PopCount(x uint64) int {
 		pc[byte(x>>(6*8))] +
 		pc[byte(x>>(7*8))])
 }
+
+// PopCountv3 is another version of PopCount which shifts the input number by one
+// bit at a time and checks the rightmost bit instead of doing a per-octet check.
+func PopCountv3(x uint64) int {
+	var popCount byte
+	for i := 0; i < 64; i++ {
+		popCount += byte((x >> uint64(i)) & 1)
+	}
+	return int(popCount)
+}

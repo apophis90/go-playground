@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/apophis90/lets-go/chapter-02/package_initialization/popcount"
+	"github.com/apophis90/lets-go/chapter-02/package_initialization/popcount_v2/popcount"
 )
 
 func main() {
