@@ -1,15 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"io"
 	"math/rand"
 	"os"
-	"strconv"
 	"time"
 )
-
-var scanner = bufio.NewScanner(os.Stdin)
 
 func main() {
 	n := newPatternOp()
@@ -27,15 +24,22 @@ func main() {
 		fmt.Println("")
 		fmt.Print("> ")
 
-		scanner.Scan()
-		input, err := strconv.ParseInt(scanner.Text(), 10, 0)
+		input := 0
+		_, err := fmt.Scanf("%d", &input)
+
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error parsing input %v\n", scanner.Text())
-			os.Exit(1)
+			if err == io.EOF {
+				fmt.Println("EOF")
+				os.Exit(0)
+			} else {
+				fmt.Fprintf(os.Stderr, "Error parsing input: %v\n", err.Error())
+				clear()
+				continue
+			}
 		}
 		if input > 5 || input < 0 {
-			fmt.Fprintf(os.Stderr, "Invalid input, value between %d and %d expected.\n", 0, 4)
-			os.Exit(2)
+			fmt.Fprintf(os.Stderr, "Invalid input, value between %d and %d expected.\n", 0, 5)
+			continue
 		}
 		n = invokeOp(int(input), n)
 	}
@@ -45,7 +49,6 @@ func invokeOp(index int, n byte) byte {
 	var result byte
 	if index == 0 {
 		result = setBitOp(n)
-		fmt.Printf("The new bit pattern is: %08b\n", result)
 	} else if index == 1 {
 		result = clearBitOp(n)
 	} else if index == 2 {
@@ -57,38 +60,40 @@ func invokeOp(index int, n byte) byte {
 	} else {
 		exitOp()
 	}
+	fmt.Printf("Bit pattern is: %08b\n", result)
 	return result
 }
 
 func setBitOp(n byte) byte {
-	var bitPos uint64
-	var err error
-	for {
-		fmt.Print("Which bit should be set? [0-7] ")
-		scanner.Scan()
-		bitPos, err = strconv.ParseUint(scanner.Text(), 10, 0)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error parsing input: %v\n", scanner.Text())
-			continue
-		}
-		if bitPos < 0 || bitPos > 7 {
-			fmt.Fprintf(os.Stderr, "Index out of range: %d (should be 0-7)\n", bitPos)
-			continue
-		}
-		break
+	pos := readBitPos()
+	if pos == 100 {
+		return n
 	}
-	return byte(n | (1 << bitPos))
+	return byte(n | (1 << uint64(pos)))
 }
 
 func clearBitOp(n byte) byte {
-	return byte(0)
+	pos := readBitPos()
+	if pos == 100 {
+		return n
+	}
+	return byte(n &^ (1 << uint64(pos)))
 }
 
 func toggleBitOp(n byte) byte {
-	return byte(0)
+	pos := readBitPos()
+	if pos == 100 {
+		return n
+	}
+	return byte(n ^ (1 << uint64(pos)))
 }
 
 func checkBitOp(n byte) byte {
+	shift := readBitPos()
+	if shift != 100 {
+		result := ((n >> shift) & 1)
+		fmt.Printf("Bit at position %d is: %d\n", shift, result)
+	}
 	return n
 }
 
@@ -100,4 +105,35 @@ func newPatternOp() byte {
 func exitOp() {
 	fmt.Println("Bye.")
 	os.Exit(0)
+}
+
+func readBitPos() uint64 {
+	var bitPos uint64
+	for {
+		fmt.Print("Which bit should be chosen? [0-7] ")
+		_, err := fmt.Scanf("%v", &bitPos)
+		if err != nil {
+			if err == io.EOF {
+				return uint64(100)
+			}
+			fmt.Fprintf(os.Stderr, "Error parsing input: %v\n", err.Error())
+			continue
+		}
+		if bitPos < 0 || bitPos > 7 {
+			fmt.Fprintf(os.Stderr, "Index out of range: %d (should be 0-7)\n", bitPos)
+			continue
+		}
+		break
+	}
+	return bitPos
+}
+
+func clear() {
+	var in rune
+	for {
+		fmt.Scanf("%c", &in)
+		if in == '\n' {
+			break
+		}
+	}
 }
