@@ -40,16 +40,18 @@ func main() {
 }
 
 /*
-	This implementation of computing color based on cell height is
-	originally comes from https://github.com/ladrift/gopl-exercises/blob/master/ch3/ex3.3/main.go.
+	This implementation of computing color based on cell height originally comes
+	from https://github.com/ladrift/gopl-exercises/blob/master/ch3/ex3.3/main.go.
 */
 func computeColor(i, j int) color.Color {
 	x := xyrange * (float64(i)/cells - 0.5) // -15.0..+15.0
 	y := xyrange * (float64(j)/cells - 0.5) // -15.0..+15.0
 
 	z := f(x, y)
+
 	r := 255 * (z + 1) / 2
 	b := 255 * (1 - z) / 2
+
 	return color.RGBA{uint8(r), 0x00, uint8(b), 0x00}
 }
 
