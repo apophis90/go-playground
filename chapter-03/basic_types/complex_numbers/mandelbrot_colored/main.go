@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"math"
 	"math/cmplx"
 	"os"
 )
@@ -24,7 +25,7 @@ func main() {
 			x := float64(px)/width*(xmax-xmin) + xmin // [-2, 2]
 			z := complex(x, y)
 			// Image point (px, py) represents complex value z.
-			img.SetRGBA(px, py, mandelbrot(z))
+			img.SetRGBA(px, py, mandelbrot2(z))
 		}
 	}
 	png.Encode(os.Stdout, img) // Errors are ignored.
@@ -47,6 +48,26 @@ func mandelbrot(z complex128) color.RGBA {
 		v = v*v + z
 		if cmplx.Abs(v) > 2 {
 			return color.RGBA{255 - contrastR*n, 255 - contrastG*n, 255 - contrastB*n, 255}
+		}
+	}
+	return color.RGBA{0, 0, 0, 255}
+}
+
+func mandelbrot2(z complex128) color.RGBA {
+	const iterations = 200
+	const contrast = 15
+
+	var v complex128
+	for n := uint8(0); n < iterations; n++ {
+		v = v*v + z
+		if cmplx.Abs(v) > 2 {
+			switch {
+			case n > 50:
+				return color.RGBA{100, 0, 0, 255}
+			default:
+				logScale := math.Log(float64(n)) / math.Log(float64(iterations)) // [0..1]
+				return color.RGBA{0, 0, 255 - uint8(logScale*255), 255}
+			}
 		}
 	}
 	return color.RGBA{0, 0, 0, 255}
