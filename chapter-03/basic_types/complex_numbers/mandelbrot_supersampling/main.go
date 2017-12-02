@@ -27,6 +27,7 @@ func main() {
 			x := float64(px)/width*(xmax-xmin) + xmin // [-2, 2]
 			subPixels := make([]color.Color, 0)
 
+			// See https://github.com/torbiak/gopl/blob/master/ex3.6/main.go
 			for i := 0; i < 2; i++ {
 				for j := 0; j < 2; j++ {
 					z := complex(x+offx[i], y+offy[j])
