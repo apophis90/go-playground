@@ -21,7 +21,9 @@ func main() {
 
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 
+	// Iterate over 1024x1024 raster
 	for py := 0; py < height; py++ {
+		// Transfer pixel (x,y) into 4x4 [-2,2] raster
 		y := float64(py)/height*(ymax-ymin) + ymin // [-2, 2]
 		for px := 0; px < width; px++ {
 			x := float64(px)/width*(xmax-xmin) + xmin // [-2, 2]
@@ -30,6 +32,7 @@ func main() {
 			// See https://github.com/torbiak/gopl/blob/master/ex3.6/main.go
 			for i := 0; i < 2; i++ {
 				for j := 0; j < 2; j++ {
+					// Compute subpixel values by considering neighbor pixels.
 					z := complex(x+offx[i], y+offy[j])
 					subPixels = append(subPixels, mandelbrot(z))
 				}
